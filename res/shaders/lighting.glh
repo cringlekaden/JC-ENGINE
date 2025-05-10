@@ -43,12 +43,10 @@ vec4 calculateLight(BaseLight baseLight, vec3 direction, vec3 normal, vec3 world
     if(diffuseFactor > 0) {
         diffuseColor = vec4(baseLight.color, 1.0) * baseLight.intensity * diffuseFactor;
         vec3 directionToEye = normalize(C_cameraPosition - worldPos);
-        //Blinn-Phong below
-        //vec3 halfDirection = normalize(directionToEye - direction);
-        //float specularFactor = dot(halfDirection, normal);
-        //Phong below
-        vec3 reflectDirection = normalize(reflect(direction, normal));
-        float specularFactor = dot(directionToEye, reflectDirection);
+        //vec3 reflectDirection = normalize(reflect(direction, normal));
+        vec3 halfDirection = normalize(directionToEye - direction);
+        float specularFactor = dot(halfDirection, normal);
+        //float specularFactor = dot(directionToEye, reflectDirection);
         specularFactor = pow(specularFactor, specularExponent);
         if(specularFactor > 0)
             specularColor = vec4(baseLight.color, 1.0) * specularIntensity * specularFactor;
