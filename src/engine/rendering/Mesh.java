@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Mesh implements Runnable {
 
@@ -66,18 +67,8 @@ public class Mesh implements Runnable {
     }
 
     public void draw() {
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, resource.getVBO());
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE * 4, 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.SIZE * 4, 12);
-        glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.SIZE * 4, 20);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIBO());
+        glBindVertexArray(resource.getVAO());
         glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(0);
     }
 
     public void destroy() {
