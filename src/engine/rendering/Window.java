@@ -82,6 +82,10 @@ public class Window {
         return height;
     }
 
+    public static float getAspectRatio() {
+        return (float)getWidth() / (float)getHeight();
+    }
+
     public static String getTitle() {
         return title;
     }

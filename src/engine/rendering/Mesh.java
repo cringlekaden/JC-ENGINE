@@ -99,7 +99,7 @@ public class Mesh implements Runnable {
         model.calculateNormals();
         ArrayList<Vertex> vertices = new ArrayList<>();
         for (int i = 0; i < model.getPositions().size(); i++)
-            vertices.add(new Vertex(model.getPositions().get(i), model.getTexCoords().get(i), model.getNormals().get(i)));
+            vertices.add(new Vertex(model.getPositions().get(i), model.getTexCoords().get(i), model.getNormals().get(i), model.getTangents().get(i)));
         Vertex[] vertexData = new Vertex[vertices.size()];
         vertices.toArray(vertexData);
         Integer[] indexData = new Integer[model.getIndices().size()];

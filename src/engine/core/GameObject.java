@@ -72,7 +72,7 @@ public class GameObject {
 
     public ArrayList<GameObject> getAllAttached() {
         ArrayList<GameObject> result = new ArrayList<>();
-        for(GameObject child : children)
+        for (GameObject child : children)
             result.addAll(child.getAllAttached());
         result.add(this);
         return result;

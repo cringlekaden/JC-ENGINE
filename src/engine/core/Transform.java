@@ -38,8 +38,7 @@ public class Transform {
         rotation = getLookAtRotation(point, up);
     }
 
-    public Quaternion getLookAtRotation(Vector3f point, Vector3f up)
-    {
+    public Quaternion getLookAtRotation(Vector3f point, Vector3f up) {
         return new Quaternion(new Matrix4f().rotation(point.sub(position).normalized(), up));
     }
 
@@ -103,5 +102,9 @@ public class Transform {
 
     public void setScale(Vector3f scale) {
         this.scale = scale;
+    }
+
+    public void setScale(float multiplier) {
+        this.scale = scale.mul(multiplier);
     }
 }

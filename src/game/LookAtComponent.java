@@ -11,9 +11,9 @@ public class LookAtComponent extends GameComponent {
 
     @Override
     public void update(float delta) {
-        if(renderingEngine != null) {
+        if (renderingEngine != null) {
             Quaternion newRot = getTransform().getLookAtRotation(renderingEngine.getMainCamera().getTransform()
-                            .getTransformedPosition(), new Vector3f(0,1,0));
+                    .getTransformedPosition(), new Vector3f(0, 1, 0));
             getTransform().setRotation(getTransform().getRotation().nlerp(newRot, delta * 5.0f, true));
             //getTransform().setRotation(getTransform().getRotation().slerp(newRot, delta * 5.0f, true));
         }

@@ -33,24 +33,16 @@ public class RenderingEngine extends MappedValues {
         lights = new ArrayList<>();
         samplerMap = new HashMap<>();
         samplerMap.put("diffuse", 0);
+        samplerMap.put("normalMap", 1);
         addVector("ambient", new Vector3f(0.1f, 0.1f, 0.1f));
-    }
-
-    public static String getOpenGLVersion() {
-        return glGetString(GL_VERSION);
     }
 
     public void updateUniformStruct(Transform transform, Material material, Shader shader, String uniformName, String uniformType) {
         throw new IllegalArgumentException(uniformType + " is not a valid type in RenderingEngine...");
     }
 
-    public BaseLight getActiveLight() {
-        return activeLight;
-    }
-
     public void render(GameObject object) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        forwardAmbient = new Shader("fr-ambient");
         object.renderAll(forwardAmbient, this);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -58,11 +50,23 @@ public class RenderingEngine extends MappedValues {
         glDepthFunc(GL_EQUAL);
         for (BaseLight light : lights) {
             activeLight = light;
-            object.renderAll(light.getShader(), this);
+            object.renderAll(activeLight.getShader(), this);
         }
         glDepthFunc(GL_LESS);
         glDepthMask(true);
         glDisable(GL_BLEND);
+    }
+
+    public void initAmbientLight() {
+        forwardAmbient = new Shader("fr-ambient");
+    }
+
+    public static String getOpenGLVersion() {
+        return glGetString(GL_VERSION);
+    }
+
+    public BaseLight getActiveLight() {
+        return activeLight;
     }
 
     public int getSamplerSlot(String samplerName) {

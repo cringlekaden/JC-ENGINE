@@ -29,13 +29,13 @@ public class FreeMove extends GameComponent {
     @Override
     public void input(float delta) {
         float movAmt = speed * delta;
-        if(input.isKeyDown(forwardKey))
+        if (input.isKeyDown(forwardKey))
             move(getTransform().getRotation().getForward(), movAmt);
-        if(input.isKeyDown(backKey))
+        if (input.isKeyDown(backKey))
             move(getTransform().getRotation().getForward(), -movAmt);
-        if(input.isKeyDown(leftKey))
+        if (input.isKeyDown(leftKey))
             move(getTransform().getRotation().getLeft(), movAmt);
-        if(input.isKeyDown(rightKey))
+        if (input.isKeyDown(rightKey))
             move(getTransform().getRotation().getRight(), movAmt);
     }
 

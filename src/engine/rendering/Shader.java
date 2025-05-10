@@ -107,9 +107,10 @@ public class Shader implements Runnable {
                 switch (uniformType) {
                     case "vec3" -> setUniform(uniformName, renderingEngine.getVector(unprefixedUniformName));
                     case "float" -> setUniform(uniformName, renderingEngine.getFloat(unprefixedUniformName));
-                    case "DirectionalLight" -> setUniform(uniformName, (DirectionalLight) renderingEngine.getActiveLight());
-                    case "PointLight" -> setUniform(uniformName, (PointLight) renderingEngine.getActiveLight());
-                    case "SpotLight" -> setUniform(uniformName, (SpotLight) renderingEngine.getActiveLight());
+                    case "DirectionalLight" ->
+                            setUniformDirectionalLight(uniformName, (DirectionalLight) renderingEngine.getActiveLight());
+                    case "PointLight" -> setUniformPointLight(uniformName, (PointLight) renderingEngine.getActiveLight());
+                    case "SpotLight" -> setUniformSpotLight(uniformName, (SpotLight) renderingEngine.getActiveLight());
                     default -> renderingEngine.updateUniformStruct(transform, material, this, uniformName, uniformType);
                 }
             } else if (uniformName.startsWith("C_")) {
@@ -148,18 +149,18 @@ public class Shader implements Runnable {
         GL20.glUniformMatrix4fv(resource.getUniforms().get(uniform), true, Util.createFlippedBuffer(matrix));
     }
 
-    public void setUniform(String uniform, BaseLight baseLight) {
+    public void setUniformBaseLight(String uniform, BaseLight baseLight) {
         setUniform(uniform + ".color", baseLight.getColor());
         setUniform(uniform + ".intensity", baseLight.getIntensity());
     }
 
-    public void setUniform(String uniform, DirectionalLight directionalLight) {
-        setUniform(uniform + ".baseLight", (BaseLight) directionalLight);
+    public void setUniformDirectionalLight(String uniform, DirectionalLight directionalLight) {
+        setUniformBaseLight(uniform + ".baseLight", directionalLight);
         setUniform(uniform + ".direction", directionalLight.getDirection());
     }
 
-    public void setUniform(String uniform, PointLight pointLight) {
-        setUniform(uniform + ".baseLight", (BaseLight) pointLight);
+    public void setUniformPointLight(String uniform, PointLight pointLight) {
+        setUniformBaseLight(uniform + ".baseLight", pointLight);
         setUniform(uniform + ".atten.constant", pointLight.getAttenuation().getConstant());
         setUniform(uniform + ".atten.linear", pointLight.getAttenuation().getLinear());
         setUniform(uniform + ".atten.exponent", pointLight.getAttenuation().getExponent());
@@ -167,8 +168,8 @@ public class Shader implements Runnable {
         setUniform(uniform + ".range", pointLight.getRange());
     }
 
-    public void setUniform(String uniform, SpotLight spotLight) {
-        setUniform(uniform + ".pointLight", (PointLight) spotLight);
+    public void setUniformSpotLight(String uniform, SpotLight spotLight) {
+        setUniformPointLight(uniform + ".pointLight", spotLight);
         setUniform(uniform + ".direction", spotLight.getDirection());
         setUniform(uniform + ".cutoff", spotLight.getCutoff());
     }

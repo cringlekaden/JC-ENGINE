@@ -26,6 +26,7 @@ public class CoreEngine {
         int frames = 0;
         double frameCounter = 0;
         game.init();
+        renderingEngine.initAmbientLight();
         double lastFrameTime = Time.getTime();
         double unprocessedTime = 0;
         while (isRunning) {

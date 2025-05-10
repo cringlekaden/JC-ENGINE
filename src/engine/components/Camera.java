@@ -1,9 +1,8 @@
 package engine.components;
 
-import engine.core.*;
-import engine.rendering.Window;
-
-import static org.lwjgl.glfw.GLFW.*;
+import engine.core.CoreEngine;
+import engine.core.Matrix4f;
+import engine.core.Vector3f;
 
 public class Camera extends GameComponent {
 
