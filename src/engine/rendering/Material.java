@@ -1,6 +1,7 @@
 package engine.rendering;
 
 import engine.rendering.resources.MappedValues;
+import engine.rendering.textures.Texture;
 
 import java.util.HashMap;
 

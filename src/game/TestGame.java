@@ -6,13 +6,14 @@ import engine.core.GameObject;
 import engine.core.Quaternion;
 import engine.core.Vector3f;
 import engine.rendering.*;
+import engine.rendering.textures.Texture;
 
 
 public class TestGame extends Game {
 
     public void init() {
         Mesh mesh = new Mesh("plane3.obj");
-        Material material2 = new Material(new Texture("bricks2.jpg"), 1, 8, new Texture("bricks2_normal.jpg"), new Texture("bricks2_disp.jpg"), 0.04f, -1.0f);
+        Material material2 = new Material(new Texture("bricks2.jpg"), 1, 8, new Texture("bricks2_normal.png"), new Texture("bricks2_disp.jpg"), 0.04f, -1.0f);
         Material material = new Material(new Texture("bricks.jpg"), 1, 8, new Texture("bricks_normal.jpg"), new Texture("bricks_disp.jpg"), 0.03f, -0.5f);
         Mesh tempMesh = new Mesh("monkey3.obj");
         MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
