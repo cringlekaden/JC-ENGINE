@@ -31,6 +31,7 @@ public class MeshResource implements Runnable {
         glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.SIZE * 4, 12);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.SIZE * 4, 20);
         glVertexAttribPointer(3, 3, GL_FLOAT, false, Vertex.SIZE * 4, 32);
+        //glVertexAttribPointer(3, 3, GL_FLOAT, false, Vertex.SIZE * 4, 44);
     }
 
     public void addReference() {

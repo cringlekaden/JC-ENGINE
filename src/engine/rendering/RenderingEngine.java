@@ -6,6 +6,7 @@ import engine.core.GameObject;
 import engine.core.Transform;
 import engine.core.Vector3f;
 import engine.rendering.resources.MappedValues;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +29,13 @@ public class RenderingEngine extends MappedValues {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_DEPTH_CLAMP);
+        //glEnable(GL_DEPTH_CLAMP);
         glEnable(GL_TEXTURE_2D);
         lights = new ArrayList<>();
         samplerMap = new HashMap<>();
         samplerMap.put("diffuse", 0);
         samplerMap.put("normalMap", 1);
+        samplerMap.put("dispMap", 2);
         addVector("ambient", new Vector3f(0.1f, 0.1f, 0.1f));
     }
 
@@ -50,7 +52,7 @@ public class RenderingEngine extends MappedValues {
         glDepthFunc(GL_EQUAL);
         for (BaseLight light : lights) {
             activeLight = light;
-            object.renderAll(activeLight.getShader(), this);
+            object.renderAll(light.getShader(), this);
         }
         glDepthFunc(GL_LESS);
         glDepthMask(true);

@@ -8,10 +8,18 @@ public class Material extends MappedValues {
 
     private HashMap<String, Texture> textureHashMap;
 
-    public Material() {
+    public Material(Texture diffuse, float specularIntensity, float specularExponent, Texture normal,
+                    Texture dispMap, float dispMapScale, float dispMapBias) {
         super();
         this.textureHashMap = new HashMap<>();
-        textureHashMap.put("normalMap", new Texture("default_normal.jpg"));
+        addTexture("diffuse", diffuse);
+        addFloat("specularIntensity", specularIntensity);
+        addFloat("specularExponent", specularExponent);
+        addTexture("normalMap", normal);
+        addTexture("dispMap", dispMap);
+        float baseBias = dispMapScale / 2.0f;
+        addFloat("dispMapScale", dispMapScale);
+        addFloat("dispMapBias", -baseBias + baseBias * dispMapBias);
     }
 
     public Texture getTexture(String name) {

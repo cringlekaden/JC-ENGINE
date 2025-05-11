@@ -37,7 +37,7 @@ public class IndexedModel {
     }
 
     public void calculateTangents() {
-        for (int i = 0; i < indices.size(); i += 3) {
+        for(int i = 0; i < indices.size(); i += 3) {
             int i0 = indices.get(i);
             int i1 = indices.get(i + 1);
             int i2 = indices.get(i + 2);
@@ -47,9 +47,9 @@ public class IndexedModel {
             float deltaV1 = texCoords.get(i1).getY() - texCoords.get(i0).getY();
             float deltaU2 = texCoords.get(i2).getX() - texCoords.get(i0).getX();
             float deltaV2 = texCoords.get(i2).getY() - texCoords.get(i0).getY();
-            float dividend = deltaU1 * deltaV2 - deltaU2 * deltaV1;
-            float f = dividend == 0 ? 1.0f : 1.0f / dividend;
-            Vector3f tangent = new Vector3f(0, 0, 0);
+            float dividend = (deltaU1*deltaV2 - deltaU2*deltaV1);
+            float f = dividend == 0 ? 0.0f : 1.0f/dividend;
+            Vector3f tangent = new Vector3f(0,0,0);
             tangent.setX(f * (deltaV2 * edge1.getX() - deltaV1 * edge2.getX()));
             tangent.setY(f * (deltaV2 * edge1.getY() - deltaV1 * edge2.getY()));
             tangent.setZ(f * (deltaV2 * edge1.getZ() - deltaV1 * edge2.getZ()));
@@ -57,8 +57,7 @@ public class IndexedModel {
             tangents.get(i1).set(tangents.get(i1).add(tangent));
             tangents.get(i2).set(tangents.get(i2).add(tangent));
         }
-        for(int i = 0; i < tangents.size(); i++)
-            tangents.get(i).set(tangents.get(i).normalized());
+        for (Vector3f tangent : tangents) tangent.set(tangent.normalized());
     }
 
     public ArrayList<Vector3f> getPositions() {

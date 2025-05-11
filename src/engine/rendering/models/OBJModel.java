@@ -37,7 +37,7 @@ public class OBJModel {
                     positions.add(new Vector3f(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
                             Float.parseFloat(tokens[3])));
                 else if (tokens[0].equals("vt"))
-                    texCoords.add(new Vector2f(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2])));
+                    texCoords.add(new Vector2f(Float.parseFloat(tokens[1]), 1.0f - Float.parseFloat(tokens[2])));
                 else if (tokens[0].equals("vn"))
                     normals.add(new Vector3f(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
                             Float.parseFloat(tokens[3])));
@@ -62,45 +62,44 @@ public class OBJModel {
         HashMap<OBJIndex, Integer> resultIndexMap = new HashMap<>();
         HashMap<Integer, Integer> normalIndexMap = new HashMap<>();
         HashMap<Integer, Integer> indexMap = new HashMap<>();
-        for (int i = 0; i < indices.size(); i++) {
+        for(int i = 0; i < indices.size(); i++) {
             OBJIndex currentIndex = indices.get(i);
             Vector3f currentPosition = positions.get(currentIndex.vertexIndex);
             Vector2f currentTexCoord;
             Vector3f currentNormal;
-            if (hasTexCoords)
+            if(hasTexCoords)
                 currentTexCoord = texCoords.get(currentIndex.texCoordIndex);
             else
-                currentTexCoord = new Vector2f(0, 0);
-            if (hasNormals)
+                currentTexCoord = new Vector2f(0,0);
+            if(hasNormals)
                 currentNormal = normals.get(currentIndex.normalIndex);
             else
-                currentNormal = new Vector3f(0, 0, 0);
+                currentNormal = new Vector3f(0,0,0);
             Integer modelVertexIndex = resultIndexMap.get(currentIndex);
-            if (modelVertexIndex == null) {
+            if(modelVertexIndex == null) {
                 modelVertexIndex = result.getPositions().size();
                 resultIndexMap.put(currentIndex, modelVertexIndex);
                 result.getPositions().add(currentPosition);
                 result.getTexCoords().add(currentTexCoord);
-                if (hasNormals)
+                if(hasNormals)
                     result.getNormals().add(currentNormal);
-                result.getTangents().add(new Vector3f(0, 0, 0));
             }
             Integer normalModelIndex = normalIndexMap.get(currentIndex.vertexIndex);
-            if (normalModelIndex == null) {
+            if(normalModelIndex == null) {
                 normalModelIndex = normalModel.getPositions().size();
                 normalIndexMap.put(currentIndex.vertexIndex, normalModelIndex);
                 normalModel.getPositions().add(currentPosition);
                 normalModel.getTexCoords().add(currentTexCoord);
                 normalModel.getNormals().add(currentNormal);
-                normalModel.getTangents().add(new Vector3f(0, 0, 0));
+                normalModel.getTangents().add(new Vector3f(0,0,0));
             }
             result.getIndices().add(modelVertexIndex);
             normalModel.getIndices().add(normalModelIndex);
             indexMap.put(modelVertexIndex, normalModelIndex);
         }
-        if (!hasNormals) {
+        if(!hasNormals) {
             normalModel.calculateNormals();
-            for (int i = 0; i < result.getPositions().size(); i++)
+            for(int i = 0; i < result.getPositions().size(); i++)
                 result.getNormals().add(normalModel.getNormals().get(indexMap.get(i)));
         }
         normalModel.calculateTangents();
@@ -114,8 +113,10 @@ public class OBJModel {
         OBJIndex result = new OBJIndex();
         result.vertexIndex = Integer.parseInt(values[0]) - 1;
         if (values.length > 1) {
-            hasTexCoords = true;
-            result.texCoordIndex = Integer.parseInt(values[1]) - 1;
+            if(!values[1].isEmpty()) {
+                hasTexCoords = true;
+                result.texCoordIndex = Integer.parseInt(values[1]) - 1;
+            }
             if (values.length > 2) {
                 hasNormals = true;
                 result.normalIndex = Integer.parseInt(values[2]) - 1;

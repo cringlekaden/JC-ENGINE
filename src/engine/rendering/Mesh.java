@@ -93,10 +93,17 @@ public class Mesh implements Runnable {
         }
     }
 
-    private void loadMesh(String fileName) {
+    private Mesh loadMesh(String fileName) {
+        String[] splitArray = fileName.split("\\.");
+        String ext = splitArray[splitArray.length - 1];
+        if(!ext.equals("obj")) {
+            System.err.println("Error: '" + ext + "' file format not supported for mesh data.");
+            new Exception().printStackTrace();
+            System.exit(1);
+        }
         OBJModel test = new OBJModel("./res/models/" + fileName);
         IndexedModel model = test.toIndexedModel();
-        model.calculateNormals();
+        //model.calculateNormals();
         ArrayList<Vertex> vertices = new ArrayList<>();
         for (int i = 0; i < model.getPositions().size(); i++)
             vertices.add(new Vertex(model.getPositions().get(i), model.getTexCoords().get(i), model.getNormals().get(i), model.getTangents().get(i)));
@@ -105,5 +112,6 @@ public class Mesh implements Runnable {
         Integer[] indexData = new Integer[model.getIndices().size()];
         model.getIndices().toArray(indexData);
         addVertices(vertexData, Util.toIntArray(indexData), false);
+        return this;
     }
 }
