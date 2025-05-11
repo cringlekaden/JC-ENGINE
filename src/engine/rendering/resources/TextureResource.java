@@ -1,5 +1,6 @@
 package engine.rendering.resources;
 
+import engine.rendering.textures.TextureFormat;
 import engine.rendering.textures.TextureLoader;
 
 import java.lang.ref.Cleaner;
@@ -40,19 +41,19 @@ public class TextureResource {
     }
 
     // Constructor for render targets
-    public TextureResource(int width, int height, int internalFormat, int format, int type) {
+    public TextureResource(int width, int height, TextureFormat format) {
         this.width = width;
         this.height = height;
         this.id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, (ByteBuffer) null);
+        glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, width, height, 0, format.format, format.type, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
         cleanable = cleaner.register(this, new GLTextureCleaner(id));
     }
 
-    public int getId() { return id; }
+    public int getID() { return id; }
 
     public int getWidth() { return width; }
 

@@ -1,14 +1,6 @@
 package engine.rendering.textures;
 
 import engine.rendering.resources.TextureResource;
-import org.lwjgl.BufferUtils;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.lang.ref.Cleaner;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -23,18 +15,18 @@ public class Texture {
         this.resource.addReference();
     }
 
-    public Texture(int width, int height, int internalFormat, int format, int type) {
-        this.resource = new TextureResource(width, height, internalFormat, format, type);
+    public Texture(int width, int height, TextureFormat format) {
+        this.resource = new TextureResource(width, height, format);
         this.resource.addReference();
     }
 
     public void bind(int samplerSlot) {
         glActiveTexture(GL_TEXTURE0 + samplerSlot);
-        glBindTexture(GL_TEXTURE_2D, resource.getId());
+        glBindTexture(GL_TEXTURE_2D, resource.getID());
     }
 
-    public int getId() {
-        return resource.getId();
+    public int getID() {
+        return resource.getID();
     }
 
     public int getWidth() {
