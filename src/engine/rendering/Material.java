@@ -9,6 +9,11 @@ public class Material extends MappedValues {
 
     private HashMap<String, Texture> textureHashMap;
 
+    public Material(Texture diffuse, float specularIntensity, float specularExponent) {
+        this(diffuse, specularIntensity, specularExponent, new Texture("default_normal.jpg"),
+                new Texture("default_disp.png"), 1, 0);
+    }
+
     public Material(Texture diffuse, float specularIntensity, float specularExponent, Texture normal,
                     Texture dispMap, float dispMapScale, float dispMapBias) {
         super();

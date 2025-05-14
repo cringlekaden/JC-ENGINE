@@ -45,11 +45,11 @@ public class TextureResource {
         this.width = width;
         this.height = height;
         this.id = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, width, height, 0, format.format, format.type, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(format.target, id);
+        glTexImage2D(format.target, 0, format.internalFormat, width, height, 0, format.format, format.type, (ByteBuffer) null);
+        glTexParameteri(format.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(format.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(format.target, 0);
         cleanable = cleaner.register(this, new GLTextureCleaner(id));
     }
 
