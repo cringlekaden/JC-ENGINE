@@ -17,6 +17,10 @@ public class FreeLook extends GameComponent {
     private float deadzone;
     private int unlockMouseKey;
 
+    public FreeLook() {
+        this(0.3f);
+    }
+
     public FreeLook(float sensitivity) {
         this(sensitivity, 5, GLFW_KEY_SPACE);
     }

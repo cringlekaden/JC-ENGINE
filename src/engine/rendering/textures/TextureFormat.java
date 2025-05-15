@@ -10,13 +10,17 @@ public class TextureFormat {
     public final int format;
     public final int type;
     public final int target;
+    public final int minFilter;
+    public final int magFilter;
     public final boolean clamp;
 
-    public TextureFormat(int internalFormat, int format, int type, int target, boolean clamp) {
+    public TextureFormat(int internalFormat, int format, int type, int target, int minFilter, int magFilter, boolean clamp) {
         this.internalFormat = internalFormat;
         this.format = format;
         this.type = type;
         this.target = target;
+        this.minFilter = minFilter;
+        this.magFilter = magFilter;
         this.clamp = clamp;
     }
 
@@ -26,6 +30,8 @@ public class TextureFormat {
             GL11.GL_RGBA,
             GL11.GL_UNSIGNED_BYTE,
             GL11.GL_TEXTURE_2D,
+            GL11.GL_LINEAR_MIPMAP_LINEAR,
+            GL11.GL_LINEAR,
             false
     );
 
@@ -34,6 +40,8 @@ public class TextureFormat {
             GL11.GL_RGB,
             GL11.GL_UNSIGNED_BYTE,
             GL11.GL_TEXTURE_2D,
+            GL11.GL_LINEAR_MIPMAP_LINEAR,
+            GL11.GL_LINEAR,
             false
     );
 
@@ -42,7 +50,9 @@ public class TextureFormat {
             GL11.GL_DEPTH_COMPONENT,
             GL11.GL_FLOAT,
             GL11.GL_TEXTURE_2D,
-            false
+            GL11.GL_NEAREST,
+            GL11.GL_NEAREST,
+            true
     );
 
     public static final TextureFormat RGBA16F = new TextureFormat(
@@ -50,6 +60,8 @@ public class TextureFormat {
             GL11.GL_RGBA,
             GL30.GL_HALF_FLOAT,
             GL11.GL_TEXTURE_2D,
+            GL11.GL_LINEAR_MIPMAP_LINEAR,
+            GL11.GL_LINEAR,
             false
     );
 
@@ -58,6 +70,8 @@ public class TextureFormat {
             GL11.GL_RGBA,
             GL11.GL_FLOAT,
             GL11.GL_TEXTURE_2D,
+            GL11.GL_LINEAR_MIPMAP_LINEAR,
+            GL11.GL_LINEAR,
             false
     );
 }

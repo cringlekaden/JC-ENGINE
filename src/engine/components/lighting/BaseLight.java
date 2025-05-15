@@ -1,5 +1,6 @@
-package engine.components;
+package engine.components.lighting;
 
+import engine.components.GameComponent;
 import engine.core.CoreEngine;
 import engine.core.Vector3f;
 import engine.rendering.Shader;
@@ -7,10 +8,12 @@ import engine.rendering.Shader;
 public class BaseLight extends GameComponent {
 
     private Shader shader;
+    private ShadowData shadowData;
     private Vector3f color;
     private float intensity;
 
     public BaseLight(Vector3f color, float intensity) {
+        shadowData = null;
         this.color = color;
         this.intensity = intensity;
     }
@@ -26,6 +29,14 @@ public class BaseLight extends GameComponent {
 
     public void setShader(Shader shader) {
         this.shader = shader;
+    }
+
+    public ShadowData getShadowData() {
+        return shadowData;
+    }
+
+    protected void setShadowData(ShadowData shadowData) {
+        this.shadowData = shadowData;
     }
 
     public Vector3f getColor() {

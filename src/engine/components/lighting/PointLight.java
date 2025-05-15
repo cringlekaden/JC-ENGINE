@@ -1,4 +1,4 @@
-package engine.components;
+package engine.components.lighting;
 
 import engine.core.Vector3f;
 import engine.rendering.Attenuation;

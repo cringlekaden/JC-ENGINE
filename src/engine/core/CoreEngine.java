@@ -26,7 +26,7 @@ public class CoreEngine {
         int frames = 0;
         double frameCounter = 0;
         game.init();
-        renderingEngine.setDefaultShader();
+        renderingEngine.initializeShaders();
         double lastFrameTime = Time.getTime();
         double unprocessedTime = 0;
         while (isRunning) {

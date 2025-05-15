@@ -1,9 +1,9 @@
 package engine.rendering;
 
-import engine.components.BaseLight;
-import engine.components.DirectionalLight;
-import engine.components.PointLight;
-import engine.components.SpotLight;
+import engine.components.lighting.BaseLight;
+import engine.components.lighting.DirectionalLight;
+import engine.components.lighting.PointLight;
+import engine.components.lighting.SpotLight;
 import engine.core.Matrix4f;
 import engine.core.Transform;
 import engine.core.Util;
@@ -93,7 +93,9 @@ public class Shader implements Runnable {
             String uniformType = resource.getUniformTypes().get(i);
             if (uniformName.startsWith("R_")) {
                 String unprefixedUniformName = uniformName.substring(2);
-                switch (uniformType) {
+                if(unprefixedUniformName.equals("lightMatrix"))
+                    setUniform(uniformName, renderingEngine.getLightMatrix().mul(modelMatrix));
+                else switch (uniformType) {
                     case "sampler2D" -> {
                         int samplerSlot = renderingEngine.getSamplerSlot(unprefixedUniformName);
                         renderingEngine.getTexture(unprefixedUniformName).bind(samplerSlot);
@@ -177,6 +179,10 @@ public class Shader implements Runnable {
         setUniformPointLight(uniform + ".pointLight", spotLight);
         setUniform(uniform + ".direction", spotLight.getDirection());
         setUniform(uniform + ".cutoff", spotLight.getCutoff());
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     private void addVertexShader(String text) {

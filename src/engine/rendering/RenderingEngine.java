@@ -1,7 +1,8 @@
 package engine.rendering;
 
-import engine.components.BaseLight;
+import engine.components.lighting.BaseLight;
 import engine.components.Camera;
+import engine.components.lighting.ShadowData;
 import engine.core.*;
 import engine.rendering.framebuffers.Framebuffer;
 import engine.rendering.resources.MappedValues;
@@ -13,19 +14,21 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderingEngine extends MappedValues {
 
+    private static final Matrix4f shadowBiasMatrix = new Matrix4f().scale(0.5f, 0.5f, 0.5f).mul(new Matrix4f().translation(1.0f, 1.0f, 1.0f));
+
     private HashMap<String, Integer> samplerMap;
     private ArrayList<BaseLight> lights;
     private BaseLight activeLight;
     private Shader defaultShader;
+    private Shader shadowMapShader;
     private Camera mainCamera;
     private Camera altCamera;
+    private Matrix4f lightMatrix;
     private GameObject altCameraObject;
-    private Framebuffer tempTarget;
+    private Framebuffer shadowMapFramebuffer;
     private Mesh planeMesh;
     private Material planeMaterial;
     private Transform planeTransform;
-
-    //Testing code
 
     public RenderingEngine() {
         super();
@@ -40,13 +43,12 @@ public class RenderingEngine extends MappedValues {
         samplerMap.put("diffuse", 0);
         samplerMap.put("normalMap", 1);
         samplerMap.put("dispMap", 2);
+        samplerMap.put("shadowMap", 3);
         setVector("ambient", new Vector3f(0.1f, 0.1f, 0.1f));
 
-        //Testing code
-        int width = Window.getWidth() / 5;
-        int height = Window.getHeight()/ 5;
-        tempTarget = new Framebuffer(width, height, true);
-        planeMaterial = new Material(tempTarget.getColorTexture(), 1, 8);
+        shadowMapFramebuffer = new Framebuffer(1024, 1024, false);
+        setTexture("shadowMap", shadowMapFramebuffer.getDepthTexture());
+        planeMaterial = new Material(shadowMapFramebuffer.getDepthTexture(), 1, 8);
         planeTransform = new Transform();
         planeTransform.setScale(0.9f);
         planeTransform.rotate(new Vector3f(1, 0, 0), (float)Math.toRadians(90.0f));
@@ -58,6 +60,7 @@ public class RenderingEngine extends MappedValues {
     }
 
     public void updateUniformStruct(Transform transform, Material material, Shader shader, String uniformName, String uniformType) {
+        System.out.println("Uniform name: " + uniformName + ". Uniform type: " + uniformType + ". Shader: " + shader.getFileName());
         throw new IllegalArgumentException(uniformType + " is not a valid type in RenderingEngine...");
     }
 
@@ -66,17 +69,38 @@ public class RenderingEngine extends MappedValues {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         object.renderAll(defaultShader, this);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glDepthMask(false);
-        glDepthFunc(GL_EQUAL);
         for (BaseLight light : lights) {
             activeLight = light;
-            object.renderAll(light.getShader(), this);
+            ShadowData shadowData = activeLight.getShadowData();
+            shadowMapFramebuffer.bindAsRenderTarget();
+            glClear(GL_DEPTH_BUFFER_BIT);
+            if(shadowData != null) {
+                altCamera.setProjection(shadowData.getProjection());
+                altCamera.getTransform().setPosition(activeLight.getTransform().getTransformedPosition());
+                altCamera.getTransform().setRotation(activeLight.getTransform().getTransformedRotation());
+                lightMatrix = shadowBiasMatrix.mul(altCamera.getViewProjection());
+                setVector("shadowTexelSize", new Vector3f(1.0f / 1024.0f, 1.0f / 1024.0f, 0.0f));
+                setFloat("shadowBias", shadowData.getBias() / 1024.0f);
+                boolean flipFaces = shadowData.getFlipFaces();
+                Camera temp = mainCamera;
+                mainCamera = altCamera;
+                if(flipFaces)
+                    glCullFace(GL_FRONT);
+                object.renderAll(shadowMapShader, this);
+                if(flipFaces)
+                    glCullFace(GL_BACK);
+                mainCamera = temp;
+            }
+            Window.bindAsRenderTarget();
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            glDepthMask(false);
+            glDepthFunc(GL_EQUAL);
+            object.renderAll(activeLight.getShader(), this);
+            glDepthMask(true);
+            glDepthFunc(GL_LESS);
+            glDisable(GL_BLEND);
         }
-        glDepthFunc(GL_LESS);
-        glDepthMask(true);
-        glDisable(GL_BLEND);
 
 //        Window.bindAsRenderTarget();
 //        Camera temp = mainCamera;
@@ -89,8 +113,9 @@ public class RenderingEngine extends MappedValues {
 //        setMainCamera(temp);
     }
 
-    public void setDefaultShader() {
+    public void initializeShaders() {
         defaultShader = new Shader("fr-ambient");
+        shadowMapShader = new Shader("shadowMapGenerator");
     }
 
     public static String getOpenGLVersion() {
@@ -99,6 +124,10 @@ public class RenderingEngine extends MappedValues {
 
     public BaseLight getActiveLight() {
         return activeLight;
+    }
+
+    public Matrix4f getLightMatrix() {
+        return lightMatrix;
     }
 
     public int getSamplerSlot(String samplerName) {
