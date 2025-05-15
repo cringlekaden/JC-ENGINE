@@ -1,17 +1,31 @@
 package engine.rendering.resources;
 
 import engine.core.Vector3f;
+import engine.rendering.textures.Texture;
 
 import java.util.HashMap;
 
 public abstract class MappedValues {
 
+    private HashMap<String, Texture> textureHashMap;
     private HashMap<String, Vector3f> vectorHashMap;
     private HashMap<String, Float> floatHashMap;
 
     public MappedValues() {
+        textureHashMap = new HashMap<>();
         vectorHashMap = new HashMap<>();
         floatHashMap = new HashMap<>();
+    }
+
+    public Texture getTexture(String name) {
+        Texture result = textureHashMap.get(name);
+        if (result != null)
+            return result;
+        return new Texture("defaultTexture.png");
+    }
+
+    public void setTexture(String name, Texture texture) {
+        textureHashMap.put(name, texture);
     }
 
     public Vector3f getVector(String name) {
@@ -21,7 +35,7 @@ public abstract class MappedValues {
         return new Vector3f(0, 0, 0);
     }
 
-    public void addVector(String name, Vector3f vector) {
+    public void setVector(String name, Vector3f vector) {
         vectorHashMap.put(name, vector);
     }
 
@@ -32,7 +46,7 @@ public abstract class MappedValues {
         return 0;
     }
 
-    public void addFloat(String name, float value) {
+    public void setFloat(String name, float value) {
         floatHashMap.put(name, value);
     }
 }

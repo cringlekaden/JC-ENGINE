@@ -3,39 +3,23 @@ package engine.rendering;
 import engine.rendering.resources.MappedValues;
 import engine.rendering.textures.Texture;
 
-import java.util.HashMap;
-
 public class Material extends MappedValues {
-
-    private HashMap<String, Texture> textureHashMap;
 
     public Material(Texture diffuse, float specularIntensity, float specularExponent) {
         this(diffuse, specularIntensity, specularExponent, new Texture("default_normal.jpg"),
-                new Texture("default_disp.png"), 1, 0);
+                new Texture("default_disp.png"), 0, 0);
     }
 
     public Material(Texture diffuse, float specularIntensity, float specularExponent, Texture normal,
                     Texture dispMap, float dispMapScale, float dispMapBias) {
         super();
-        this.textureHashMap = new HashMap<>();
-        addTexture("diffuse", diffuse);
-        addFloat("specularIntensity", specularIntensity);
-        addFloat("specularExponent", specularExponent);
-        addTexture("normalMap", normal);
-        addTexture("dispMap", dispMap);
+        setTexture("diffuse", diffuse);
+        setFloat("specularIntensity", specularIntensity);
+        setFloat("specularExponent", specularExponent);
+        setTexture("normalMap", normal);
+        setTexture("dispMap", dispMap);
         float baseBias = dispMapScale / 2.0f;
-        addFloat("dispMapScale", dispMapScale);
-        addFloat("dispMapBias", -baseBias + baseBias * dispMapBias);
-    }
-
-    public Texture getTexture(String name) {
-        Texture result = textureHashMap.get(name);
-        if (result != null)
-            return result;
-        return new Texture("defaultTexture.png");
-    }
-
-    public void addTexture(String name, Texture texture) {
-        textureHashMap.put(name, texture);
+        setFloat("dispMapScale", dispMapScale);
+        setFloat("dispMapBias", -baseBias + baseBias * dispMapBias);
     }
 }

@@ -7,6 +7,8 @@ import java.lang.ref.Cleaner;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
@@ -32,9 +34,11 @@ public class TextureResource {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, tex.width, tex.height, 0, GL_RGBA, GL_FLOAT, tex.dataF);
         else
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex.width, tex.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.data);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//        glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
         TextureLoader.free(tex);
         cleanable = cleaner.register(this, new GLTextureCleaner(id));
@@ -49,6 +53,13 @@ public class TextureResource {
         glTexImage2D(format.target, 0, format.internalFormat, width, height, 0, format.format, format.type, (ByteBuffer) null);
         glTexParameteri(format.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(format.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if(format.clamp) {
+            glTexParameteri(format.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(format.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        } else {
+            glTexParameteri(format.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(format.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        }
         glBindTexture(format.target, 0);
         cleanable = cleaner.register(this, new GLTextureCleaner(id));
     }

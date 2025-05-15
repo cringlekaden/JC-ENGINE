@@ -91,7 +91,23 @@ public class Shader implements Runnable {
         for (int i = 0; i < resource.getUniformNames().size(); i++) {
             String uniformName = resource.getUniformNames().get(i);
             String uniformType = resource.getUniformTypes().get(i);
-            if (uniformType.equals("sampler2D")) {
+            if (uniformName.startsWith("R_")) {
+                String unprefixedUniformName = uniformName.substring(2);
+                switch (uniformType) {
+                    case "sampler2D" -> {
+                        int samplerSlot = renderingEngine.getSamplerSlot(unprefixedUniformName);
+                        renderingEngine.getTexture(unprefixedUniformName).bind(samplerSlot);
+                        setUniform(uniformName, samplerSlot);
+                    }
+                    case "vec3" -> setUniform(uniformName, renderingEngine.getVector(unprefixedUniformName));
+                    case "float" -> setUniform(uniformName, renderingEngine.getFloat(unprefixedUniformName));
+                    case "DirectionalLight" ->
+                            setUniformDirectionalLight(uniformName, (DirectionalLight) renderingEngine.getActiveLight());
+                    case "PointLight" -> setUniformPointLight(uniformName, (PointLight) renderingEngine.getActiveLight());
+                    case "SpotLight" -> setUniformSpotLight(uniformName, (SpotLight) renderingEngine.getActiveLight());
+                    default -> renderingEngine.updateUniformStruct(transform, material, this, uniformName, uniformType);
+                }
+            } else if (uniformType.equals("sampler2D")) {
                 int samplerSlot = renderingEngine.getSamplerSlot(uniformName);
                 material.getTexture(uniformName).bind(samplerSlot);
                 setUniform(uniformName, samplerSlot);
@@ -102,17 +118,6 @@ public class Shader implements Runnable {
                     setUniform(uniformName, modelMatrix);
                 else
                     throw new IllegalArgumentException(uniformName + " is not a valid component of Transform...");
-            } else if (uniformName.startsWith("R_")) {
-                String unprefixedUniformName = uniformName.substring(2);
-                switch (uniformType) {
-                    case "vec3" -> setUniform(uniformName, renderingEngine.getVector(unprefixedUniformName));
-                    case "float" -> setUniform(uniformName, renderingEngine.getFloat(unprefixedUniformName));
-                    case "DirectionalLight" ->
-                            setUniformDirectionalLight(uniformName, (DirectionalLight) renderingEngine.getActiveLight());
-                    case "PointLight" -> setUniformPointLight(uniformName, (PointLight) renderingEngine.getActiveLight());
-                    case "SpotLight" -> setUniformSpotLight(uniformName, (SpotLight) renderingEngine.getActiveLight());
-                    default -> renderingEngine.updateUniformStruct(transform, material, this, uniformName, uniformType);
-                }
             } else if (uniformName.startsWith("C_")) {
                 if (uniformName.equals("C_cameraPosition"))
                     setUniform(uniformName, renderingEngine.getMainCamera().getTransform().getTransformedPosition());

@@ -16,7 +16,7 @@ public class TestGame extends Game {
         GameObject directionalLightObject = new GameObject();
         GameObject pointLightObject = new GameObject();
         GameObject spotLightObject = new GameObject();
-        Mesh mesh = new Mesh("plane3.obj");
+        Mesh mesh = new Mesh("plane4.obj");
         Material material2 = new Material(new Texture("bricks2.jpg"), 1, 8, new Texture("bricks2_normal.png"), new Texture("bricks2_disp.jpg"), 0.04f, -1.0f);
         Material material = new Material(new Texture("bricks.jpg"), 1, 8, new Texture("bricks_normal.jpg"), new Texture("bricks_disp.png"), 0.03f, -0.5f);
         MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
@@ -34,7 +34,7 @@ public class TestGame extends Game {
         addObject(directionalLightObject);
         addObject(pointLightObject);
         addObject(spotLightObject);
-        GameObject testMesh3 = new GameObject().addComponent(new MeshRenderer(mesh, material2));
+        GameObject testMesh3 = new GameObject().addComponent(new MeshRenderer(new Mesh("plane3.obj"), material2));
         testMesh3.getTransform().setScale(0.2f);
         addObject(
                 //addObject(

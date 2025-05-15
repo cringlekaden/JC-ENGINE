@@ -2,6 +2,7 @@ package engine.rendering;
 
 import engine.core.InputHandler;
 import engine.core.Vector2f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -20,12 +21,8 @@ public class Window {
 
     public static long window;
     private static String title;
-    private static int width;
-    private static int height;
 
     public static void createWindow(int width, int height, String title) {
-        Window.width = width;
-        Window.height = height;
         Window.title = title;
         GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit())
@@ -62,7 +59,7 @@ public class Window {
 
     public static void bindAsRenderTarget() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, getWidth(), getHeight());
     }
 
     public static void render() {
@@ -82,11 +79,15 @@ public class Window {
     }
 
     public static int getWidth() {
-        return width;
+        IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
+        glfwGetFramebufferSize(window, widthBuffer, null);
+        return widthBuffer.get(0);
     }
 
     public static int getHeight() {
-        return height;
+        IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        glfwGetFramebufferSize(window, null, heightBuffer);
+        return heightBuffer.get(0);
     }
 
     public static float getAspectRatio() {
