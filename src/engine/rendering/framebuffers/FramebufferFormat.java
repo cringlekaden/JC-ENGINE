@@ -7,17 +7,21 @@ import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 
 public class FramebufferFormat {
 
-    public final TextureFormat textureFormat;
-    public final int attachment;
+    public final TextureFormat colorTextureFormat;
+    public final TextureFormat depthTextureFormat;
+    public final int colorAttachment;
+    public final int depthAttachment;
 
-    public FramebufferFormat(TextureFormat textureFormat, int attachment) {
-        this.textureFormat = textureFormat;
-        this.attachment = attachment;
+    public FramebufferFormat(TextureFormat colorTextureFormat, TextureFormat depthTextureFormat, int colorAttachment, int depthAttachment) {
+        this.colorTextureFormat = colorTextureFormat;
+        this.depthTextureFormat = depthTextureFormat;
+        this.colorAttachment = colorAttachment;
+        this.depthAttachment = depthAttachment;
     }
 
-    public static final FramebufferFormat COLOR_FORMAT =
-            new FramebufferFormat(TextureFormat.RGBA8, GL_COLOR_ATTACHMENT0);
+    public static final FramebufferFormat VARIANCE_FORMAT =
+            new FramebufferFormat(TextureFormat.VARIANCE_SHADOWMAP, TextureFormat.DEPTH_COMPONENT, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT);
 
-    public static final FramebufferFormat DEPTH_FORMAT =
-            new FramebufferFormat(TextureFormat.DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+    public static final FramebufferFormat PCF_FORMAT =
+            new FramebufferFormat(null, TextureFormat.DEPTH_COMPONENT, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT);
 }

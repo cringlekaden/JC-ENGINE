@@ -50,8 +50,18 @@ public class TextureFormat {
             GL11.GL_DEPTH_COMPONENT,
             GL11.GL_FLOAT,
             GL11.GL_TEXTURE_2D,
-            GL11.GL_NEAREST,
-            GL11.GL_NEAREST,
+            GL11.GL_LINEAR,
+            GL11.GL_LINEAR,
+            true
+    );
+
+    public static final TextureFormat VARIANCE_SHADOWMAP = new TextureFormat(
+            GL30.GL_RG32F,
+            GL30.GL_RG,
+            GL11.GL_FLOAT,
+            GL11.GL_TEXTURE_2D,
+            GL11.GL_LINEAR,
+            GL11.GL_LINEAR,
             true
     );
 

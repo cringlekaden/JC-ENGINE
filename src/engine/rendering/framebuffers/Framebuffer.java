@@ -1,6 +1,5 @@
 package engine.rendering.framebuffers;
 import engine.rendering.textures.Texture;
-import engine.rendering.textures.TextureFormat;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -16,24 +15,22 @@ public class Framebuffer implements Runnable {
     private final Texture depthTexture;
     private final int width, height;
 
-    public Framebuffer(int width, int height, boolean useColorAttachment) {
+    public Framebuffer(int width, int height, FramebufferFormat framebufferFormat) {
         this.width = width;
         this.height = height;
         fboID = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
         // Create color texture attachment
-        FramebufferFormat colorAttachmentFormat = FramebufferFormat.COLOR_FORMAT;
-        if(useColorAttachment) {
-            colorTexture = new Texture(width, height, colorAttachmentFormat.textureFormat);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachmentFormat.attachment, colorAttachmentFormat.textureFormat.target, colorTexture.getID(), 0);
+        if(framebufferFormat.colorTextureFormat != null) {
+            colorTexture = new Texture(width, height, framebufferFormat.colorTextureFormat);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, framebufferFormat.colorAttachment, framebufferFormat.colorTextureFormat.target, colorTexture.getID(), 0);
         } else {
             colorTexture = null;
         }
         // Create depth buffer attachment
-        FramebufferFormat framebufferFormat = FramebufferFormat.DEPTH_FORMAT;
-        depthTexture = new Texture(width, height, framebufferFormat.textureFormat);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, framebufferFormat.attachment, framebufferFormat.textureFormat.target, depthTexture.getID(), 0);
-        if(useColorAttachment) {
+        depthTexture = new Texture(width, height, framebufferFormat.depthTextureFormat);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, framebufferFormat.depthAttachment, framebufferFormat.depthTextureFormat.target, depthTexture.getID(), 0);
+        if(framebufferFormat.colorTextureFormat != null) {
             glDrawBuffer(GL_COLOR_ATTACHMENT0);
         } else {
             glDrawBuffer(GL_NONE);
@@ -59,7 +56,7 @@ public class Framebuffer implements Runnable {
     }
 
     public void bindAsRenderTarget() {
-        glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
         glViewport(0, 0, width, height);
     }
 
