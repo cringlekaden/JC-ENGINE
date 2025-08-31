@@ -6,8 +6,7 @@ public abstract class Game {
 
     private GameObject root;
 
-    public void init() {
-    }
+    public void init() {}
 
     public void input(float delta) {
         getRootObject().inputAll(delta);

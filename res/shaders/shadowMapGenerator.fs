@@ -2,8 +2,7 @@
 
 out vec4 fragColor;
 
-void main()
-{
+void main() {
     float depth = gl_FragCoord.z;
     float dx = dFdx(depth);
     float dy = dFdy(depth);

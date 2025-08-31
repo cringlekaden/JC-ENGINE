@@ -55,9 +55,9 @@ public class TextureFormat {
             true
     );
 
-    public static final TextureFormat VARIANCE_SHADOWMAP = new TextureFormat(
+    public static final TextureFormat SHADOW_FORMAT = new TextureFormat(
             GL30.GL_RG32F,
-            GL30.GL_RG,
+            GL30.GL_RGBA,
             GL11.GL_FLOAT,
             GL11.GL_TEXTURE_2D,
             GL11.GL_LINEAR,

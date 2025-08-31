@@ -19,8 +19,8 @@ public class FramebufferFormat {
         this.depthAttachment = depthAttachment;
     }
 
-    public static final FramebufferFormat VARIANCE_FORMAT =
-            new FramebufferFormat(TextureFormat.VARIANCE_SHADOWMAP, TextureFormat.DEPTH_COMPONENT, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT);
+    public static final FramebufferFormat SHADOW_FORMAT =
+            new FramebufferFormat(TextureFormat.SHADOW_FORMAT, TextureFormat.DEPTH_COMPONENT, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT);
 
     public static final FramebufferFormat PCF_FORMAT =
             new FramebufferFormat(null, TextureFormat.DEPTH_COMPONENT, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT);
