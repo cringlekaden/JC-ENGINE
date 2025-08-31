@@ -2,6 +2,7 @@ package engine.rendering;
 
 import engine.components.lighting.BaseLight;
 import engine.components.Camera;
+import engine.components.lighting.ShadowCameraTransform;
 import engine.components.lighting.ShadowData;
 import engine.core.*;
 import engine.rendering.framebuffers.Framebuffer;
@@ -89,12 +90,13 @@ public class RenderingEngine extends MappedValues {
                 shadowMapIndex = shadowData.getShadowMapSizeAsPowerOf2() - 1;
             setTexture("shadowMap", shadowMaps.get(shadowMapIndex).getColorTexture());
             shadowMaps.get(shadowMapIndex).bindAsRenderTarget();
-            glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
             if(shadowData != null) {
                 altCamera.setProjection(shadowData.getProjection());
-                altCamera.getTransform().setPosition(activeLight.getTransform().getTransformedPosition());
-                altCamera.getTransform().setRotation(activeLight.getTransform().getTransformedRotation());
+                ShadowCameraTransform shadowCameraTransform = activeLight.calculateShadowCameraTransform(mainCamera.getTransform().getTransformedPosition(), mainCamera.getTransform().getTransformedRotation());
+                altCamera.getTransform().setPosition(shadowCameraTransform.position);
+                altCamera.getTransform().setRotation(shadowCameraTransform.rotation);
                 lightMatrix = shadowBiasMatrix.mul(altCamera.getViewProjection());
                 setFloat("shadowVariance", shadowData.getMinVariance());
                 setFloat("shadowLightBleedReduction", shadowData.getLightBleedReduction());

@@ -2,6 +2,7 @@ package engine.components.lighting;
 
 import engine.components.GameComponent;
 import engine.core.CoreEngine;
+import engine.core.Quaternion;
 import engine.core.Vector3f;
 import engine.rendering.Shader;
 
@@ -21,6 +22,13 @@ public class BaseLight extends GameComponent {
     @Override
     public void addToEngine(CoreEngine engine) {
         engine.getRenderingEngine().addLight(this);
+    }
+
+    public ShadowCameraTransform calculateShadowCameraTransform(Vector3f mainCameraPosition, Quaternion mainCameraRotation) {
+        ShadowCameraTransform result = new ShadowCameraTransform();
+        result.position = getTransform().getTransformedPosition();
+        result.rotation = getTransform().getTransformedRotation();
+        return result;
     }
 
     public Shader getShader() {

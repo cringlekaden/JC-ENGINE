@@ -171,7 +171,7 @@ public class Shader implements Runnable {
         setUniform(uniform + ".atten.constant", pointLight.getAttenuation().getConstant());
         setUniform(uniform + ".atten.linear", pointLight.getAttenuation().getLinear());
         setUniform(uniform + ".atten.exponent", pointLight.getAttenuation().getExponent());
-        setUniform(uniform + ".position", pointLight.getTransform().getPosition());
+        setUniform(uniform + ".position", pointLight.getTransform().getTransformedPosition());
         setUniform(uniform + ".range", pointLight.getRange());
     }
 

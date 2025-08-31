@@ -27,8 +27,8 @@ public class TestGame extends Game {
         //spotLightObject->GetTransform().SetRot(Quaternion(Vector3f(0,1,0), ToRadians(90.0f)));
         spotLightObject.getTransform().rotate(new Vector3f(0,1,0), (float)Math.toRadians(90.0f));
         spotLightObject.getTransform().rotate(new Vector3f(1,0,0), (float)Math.toRadians(-60.0f));
-        spotLightObject.getTransform().setPosition(new Vector3f(10,1.0f,5));
-        directionalLightObject.addComponent(new DirectionalLight(new Vector3f(1,1,1), 0.4f, 10));
+        spotLightObject.getTransform().setPosition(new Vector3f(10,2.0f,5));
+        directionalLightObject.addComponent(new DirectionalLight(new Vector3f(1,1,1), 0.15f, 10));
         GameObject testMesh1 = new GameObject();
         GameObject testMesh2 = new GameObject();
         testMesh1.addComponent(new MeshRenderer(new Mesh("plane3.obj"), new Material(new Texture("bricks2.jpg"), 1, 8,
