@@ -18,7 +18,7 @@ public class FreeLook extends GameComponent {
     private int unlockMouseKey;
 
     public FreeLook() {
-        this(0.3f);
+        this(0.1f);
     }
 
     public FreeLook(float sensitivity) {

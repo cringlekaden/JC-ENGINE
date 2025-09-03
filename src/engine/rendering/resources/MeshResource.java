@@ -1,6 +1,7 @@
 package engine.rendering.resources;
 
 import engine.rendering.Vertex;
+import engine.rendering.GLDisposer;
 
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
@@ -47,9 +48,11 @@ public class MeshResource implements Runnable {
 
     @Override
     public void run() {
-        glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(ibo);
+        GLDisposer.enqueue(() -> {
+            glDeleteVertexArrays(vao);
+            glDeleteBuffers(vbo);
+            glDeleteBuffers(ibo);
+        });
     }
 
     public int getVAO() {

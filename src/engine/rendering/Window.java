@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
+import engine.rendering.GLDisposer;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -86,9 +87,13 @@ public class Window {
     public static void render() {
         glfwSwapBuffers(window);
         glfwPollEvents();
+        // Drain any queued GL deletions while the context is current
+        GLDisposer.drain();
     }
 
     public static void closeWindow() {
+        // Ensure all GL deletions are performed before destroying the context
+        GLDisposer.drainAll();
         if (debugProc != null) debugProc.free();
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);

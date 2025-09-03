@@ -2,6 +2,7 @@ package engine.rendering.resources;
 
 import engine.rendering.textures.TextureFormat;
 import engine.rendering.textures.TextureLoader;
+import engine.rendering.GLDisposer;
 
 import java.lang.ref.Cleaner;
 import java.nio.ByteBuffer;
@@ -122,7 +123,7 @@ public class TextureResource {
 
         @Override
         public void run() {
-            glDeleteTextures(textureId);
+            GLDisposer.enqueue(() -> glDeleteTextures(textureId));
         }
     }
 }

@@ -15,7 +15,7 @@ public class FreeMove extends GameComponent {
     private int rightKey;
 
     public FreeMove() {
-        this(10.0f);
+        this(25.0f);
     }
 
     public FreeMove(float speed) {

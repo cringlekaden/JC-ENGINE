@@ -66,3 +66,33 @@ Notes on GLSL layout qualifiers
 - Fragment outputs: layout(location=m) maps to GL_COLOR_ATTACHMENTm on the current draw framebuffer. This engine uses layout(location=0) and attaches its color texture to GL_COLOR_ATTACHMENT0 (see src/engine/rendering/framebuffers/Framebuffer.java). If you add multiple render targets (MRT), remember to call glDrawBuffers with the list of attachments you want to write to.
 - Uniforms: we do not use explicit uniform locations; Shader.java queries and caches them. Explicit uniform locations are optional in modern GLSL.
 - Compute shaders: none are used here. If you add compute, layout qualifiers cover local sizes (layout(local_size_x=..., ...)) and resource bindings (e.g., layout(rgba16f, binding=0) writeonly uniform image2D img). You must bind those on the Java side via glBindImageTexture, glBindBufferBase/Range, etc. This is separate from vertex attribute and fragment output locations.
+
+
+Showcase scene (high-res)
+- New entry point: game.ShowcaseMain launches a 2560x1440 window and loads ShowcaseGame.
+- The scene tries to use high-resolution textures and an external OBJ model if present; otherwise it falls back to the built-in bricks assets and cube/cap meshes.
+- Camera controls: WASD to move (FreeMove), mouse to look (FreeLook). Ensure the window has focus.
+
+External assets (free/CC0) recommended
+- Textures (ambientCG, CC0): https://ambientcg.com/view?id=Bricks047
+  Place the following files under res/textures/external/ambientCG
+  - Bricks047_2K_Color.jpg
+  - Bricks047_2K_NormalGL.jpg
+  - Bricks047_2K_Displacement.jpg
+  These will be automatically used by ShowcaseGame if present. Any 2K or higher is fine; 2K works well for 1440p.
+- Model (Stanford Bunny): https://graphics.stanford.edu/data/3Dscanrep/
+  Download/convert an OBJ as bunny.obj and place it under res/models/external/stanford_bunny/bunny.obj
+  If not present, the scene falls back to cube.obj.
+
+How it works
+- Asset resolution uses game.assets.AssetHelper to check for external files before falling back to bundled ones.
+- ShowcaseGame builds a large ground plane using the high-res bricks with normal and displacement mapping and places a hero model in front of the camera.
+- Lighting setup: one directional “sun” light (higher shadow map resolution) plus two colored point lights and a spotlight to stress shadows and normal mapping.
+
+Run the showcase
+- In your IDE, set main class to game.ShowcaseMain. For macOS, add -XstartOnFirstThread and the correct natives path as described earlier.
+- From the command line you can also compile/run as in the Build and run section, replacing the main class with game.ShowcaseMain.
+
+Attribution
+- ambientCG assets are CC0 (public domain). See the asset page for details.
+- The Stanford Bunny is provided by the Stanford 3D Scanning Repository; review the site for usage terms.

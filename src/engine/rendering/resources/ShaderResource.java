@@ -3,8 +3,9 @@ package engine.rendering.resources;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import engine.rendering.GLDisposer;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
 
 public class ShaderResource implements Runnable {
 
@@ -36,7 +37,7 @@ public class ShaderResource implements Runnable {
 
     @Override
     public void run() {
-        glDeleteBuffers(programID);
+        GLDisposer.enqueue(() -> glDeleteProgram(programID));
     }
 
     public int getProgramID() {

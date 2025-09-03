@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 public class RenderingEngine extends MappedValues {
 
     private static final Matrix4f shadowBiasMatrix = new Matrix4f().scale(0.5f, 0.5f, 0.5f).mul(new Matrix4f().translation(1.0f, 1.0f, 1.0f));
-    private static final int NUM_SHADOW_MAPS = 10;
+    private static final int NUM_SHADOW_MAPS = 12;
 
     private HashMap<String, Integer> samplerMap;
     private ArrayList<BaseLight> lights;
@@ -44,7 +44,6 @@ public class RenderingEngine extends MappedValues {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        // Enable depth clamp only during shadow map rendering to avoid clipping the light frustum.
         lights = new ArrayList<>();
         shadowMaps = new ArrayList<>();
         altShadowMaps = new ArrayList<>();

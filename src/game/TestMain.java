@@ -2,7 +2,7 @@ package game;
 
 import engine.core.CoreEngine;
 
-public class Main {
+public class TestMain {
 
     public static void main(String... args) {
         CoreEngine engine = new CoreEngine(1920, 1080, 120, new TestGame());

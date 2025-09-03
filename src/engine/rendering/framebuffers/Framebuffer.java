@@ -1,5 +1,6 @@
 package engine.rendering.framebuffers;
 import engine.rendering.textures.Texture;
+import engine.rendering.GLDisposer;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -95,8 +96,9 @@ public class Framebuffer implements Runnable {
 
     @Override
     public void run() {
-        glDeleteFramebuffers(fboID);
-        colorTexture.dispose(); // Manually dispose texture (calls Cleaner)
+        GLDisposer.enqueue(() -> glDeleteFramebuffers(fboID));
+        // Dispose attached textures; their cleaners will enqueue GL deletes as well
+        colorTexture.dispose();
         depthTexture.dispose();
     }
 

@@ -19,6 +19,9 @@ import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Shader implements Runnable {
 
@@ -204,7 +207,13 @@ public class Shader implements Runnable {
             System.err.println(glGetProgramInfoLog(resource.getProgramID(), 1024));
             System.exit(1);
         }
+        // Core profile (e.g., macOS) may require a VAO to be bound at validation time.
+        int tempVao = glGenVertexArrays();
+        glBindVertexArray(tempVao);
         glValidateProgram(resource.getProgramID());
+        // Unbind and delete temp VAO immediately after validation
+        glBindVertexArray(0);
+        glDeleteVertexArrays(tempVao);
         if (glGetProgrami(resource.getProgramID(), GL_VALIDATE_STATUS) == 0) {
             System.err.println("Shader program validate failed...");
             System.err.println(glGetProgramInfoLog(resource.getProgramID(), 1024));

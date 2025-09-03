@@ -1,5 +1,65 @@
-vec2 CalcParallaxTexCoords(sampler2D dispMap, mat3 tbnMatrix, vec3 directionToEye, vec2 texCoords, float scale, float bias) {
-	return texCoords.xy + (directionToEye * tbnMatrix).xy * (texture(dispMap, texCoords.xy).r * scale + bias);
+vec2 CalcParallaxTexCoords(sampler2D dispMap, mat3 tbnMatrix, vec3 directionToEyeWorld, vec2 texCoords, float scale, float bias) {
+    // Transform view direction to tangent space (TBN columns are T,B,N in world)
+    vec3 V = normalize(transpose(tbnMatrix) * normalize(directionToEyeWorld));
+    // Avoid division by zero and extreme angles
+    V.z = max(V.z, 0.001);
+
+    // Parallax Occlusion Mapping (steep parallax + small binary search)
+    // Adaptive layer count based on view angle
+    const float minLayers = 8.0;
+    const float maxLayers = 32.0;
+    float numLayers = mix(maxLayers, minLayers, abs(V.z));
+    float layerDepth = 1.0 / numLayers;
+
+    // P is the per-layer UV shift scaled by height scale
+    vec2  P = (V.xy / V.z) * scale;
+    vec2  deltaTex = -P / numLayers; // march towards viewer
+
+    // Start from the original texcoords and move along the view ray
+    float currentLayerDepth = 0.0;
+    vec2  currentTex = texCoords;
+    float currentHeight = texture(dispMap, currentTex).r * scale + bias;
+
+    // Steep parallax search until we step past the height
+    while (currentLayerDepth < currentHeight) {
+        currentTex += deltaTex;
+        currentLayerDepth += layerDepth;
+        // Early out if outside
+        if (any(bvec2(currentTex.x < 0.0 || currentTex.x > 1.0,
+                      currentTex.y < 0.0 || currentTex.y > 1.0))) {
+            return clamp(currentTex, 0.0, 1.0);
+        }
+        currentHeight = texture(dispMap, currentTex).r * scale + bias;
+    }
+
+    // One step back for previous values
+    vec2 prevTex = currentTex - deltaTex;
+    float prevLayerDepth = currentLayerDepth - layerDepth;
+    float prevHeight = texture(dispMap, prevTex).r * scale + bias;
+
+    // Linear interpolation between the last two steps for smoother transition
+    float after  = currentHeight - currentLayerDepth;
+    float before = prevHeight - prevLayerDepth;
+    float weight = before / (before - after + 1e-5);
+    vec2 parallaxTex = mix(currentTex, prevTex, clamp(weight, 0.0, 1.0));
+
+    // Optional small binary refinement (2 iterations)
+    vec2 a = parallaxTex;
+    vec2 stepDir = normalize(deltaTex);
+    float refinementStep = length(deltaTex) * 0.5;
+    for (int i = 0; i < 2; ++i) {
+        vec2 mid = a + stepDir * refinementStep;
+        float h = texture(dispMap, mid).r * scale + bias;
+        float d = (prevLayerDepth + (i+1) * (layerDepth * 0.5)) - h; // approximate
+        if (d > 0.0) {
+            a = mid;
+        } else {
+            a -= stepDir * refinementStep;
+        }
+        refinementStep *= 0.5;
+    }
+
+    return clamp(a, 0.0, 1.0);
 }
 
 float SampleShadowMap(sampler2D shadowMap, vec2 coords, float compare) {

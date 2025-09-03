@@ -1,4 +1,4 @@
-package game;
+package game.components;
 
 import engine.components.GameComponent;
 import engine.core.Quaternion;
