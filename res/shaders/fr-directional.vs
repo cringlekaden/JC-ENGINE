@@ -1,2 +1,2 @@
-#version 330
+#version 410 core
 #include "lighting.vsh"

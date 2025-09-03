@@ -22,7 +22,7 @@ public class Texture {
 
     public void bind(int samplerSlot) {
         glActiveTexture(GL_TEXTURE0 + samplerSlot);
-        glBindTexture(GL_TEXTURE_2D, resource.getID());
+        glBindTexture(resource.getTarget(), resource.getID());
     }
 
     public int getID() {

@@ -1,6 +1,7 @@
 package engine.rendering.textures;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
@@ -83,5 +84,26 @@ public class TextureFormat {
             GL11.GL_LINEAR_MIPMAP_LINEAR,
             GL11.GL_LINEAR,
             false
+    );
+
+    // Cubemap variants for future point-light shadows (not used yet)
+    public static final TextureFormat CUBE_DEPTH_COMPONENT = new TextureFormat(
+            GL14.GL_DEPTH_COMPONENT24,
+            GL11.GL_DEPTH_COMPONENT,
+            GL11.GL_FLOAT,
+            GL13.GL_TEXTURE_CUBE_MAP,
+            GL11.GL_LINEAR,
+            GL11.GL_LINEAR,
+            true
+    );
+
+    public static final TextureFormat CUBE_SHADOW_FORMAT = new TextureFormat(
+            GL30.GL_RG32F,
+            GL30.GL_RGBA,
+            GL11.GL_FLOAT,
+            GL13.GL_TEXTURE_CUBE_MAP,
+            GL11.GL_LINEAR,
+            GL11.GL_LINEAR,
+            true
     );
 }

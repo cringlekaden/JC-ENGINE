@@ -11,7 +11,6 @@ import java.lang.ref.Cleaner;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Mesh implements Runnable {
@@ -21,7 +20,6 @@ public class Mesh implements Runnable {
     private Cleaner.Cleanable cleanable;
     private Cleaner.Cleanable cleanable2;
 
-    //TODO: proper vao
     private MeshResource resource;
     private String fileName;
 
@@ -60,15 +58,20 @@ public class Mesh implements Runnable {
         resource = new MeshResource(indices.length);
         cleanable = cleaner.register(this, resource);
         cleanable2 = cleaner.register(this, this);
-        glBindBuffer(GL_ARRAY_BUFFER, resource.getVBO());
-        GL15.glBufferData(GL_ARRAY_BUFFER, Util.createFlippedBuffer(vertices), GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIBO());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Util.createFlippedBuffer(indices), GL_STATIC_DRAW);
+        // Bind VAO for buffer uploads (ELEMENT_ARRAY_BUFFER is VAO state)
+        glBindVertexArray(resource.getVAO());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, resource.getVBO());
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, Util.createFlippedBuffer(vertices), GL15.GL_STATIC_DRAW);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, resource.getIBO());
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, Util.createFlippedBuffer(indices), GL15.GL_STATIC_DRAW);
+        // Unbind VAO; GL_ARRAY_BUFFER binding is global, so optionally unbind it
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     public void draw() {
         glBindVertexArray(resource.getVAO());
-        glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
+        org.lwjgl.opengl.GL11.glDrawElements(org.lwjgl.opengl.GL11.GL_TRIANGLES, resource.getSize(), org.lwjgl.opengl.GL11.GL_UNSIGNED_INT, 0L);
     }
 
     public void destroy() {

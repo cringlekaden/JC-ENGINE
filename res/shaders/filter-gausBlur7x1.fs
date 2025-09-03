@@ -1,8 +1,8 @@
-#version 330
+#version 410 core
 
 in vec2 texCoord0;
 
-out vec4 fragColor;
+layout (location=0) out vec4 fragColor;
 
 uniform vec3 R_blurScale;
 uniform sampler2D R_filterTexture;

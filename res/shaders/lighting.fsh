@@ -3,7 +3,7 @@ in vec3 worldPos0;
 in vec4 shadowMapCoords0;
 in mat3 tbnMatrix;
 
-out vec4 fragColor;
+layout (location=0) out vec4 fragColor;
 
 uniform float dispMapScale;
 uniform float dispMapBias;

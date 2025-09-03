@@ -6,6 +6,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -21,6 +23,7 @@ public class Window {
 
     public static long window;
     private static String title;
+    private static Callback debugProc;
 
     public static void createWindow(int width, int height, String title) {
         Window.title = title;
@@ -32,8 +35,19 @@ public class Window {
         glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+        // Platform-aware context version selection
+        String os = System.getProperty("os.name", "").toLowerCase();
+        if (os.contains("mac")) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        } else {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        }
+        // Request debug context where supported (ignored otherwise)
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("GLFW failed to create window...");
@@ -55,6 +69,13 @@ public class Window {
         glfwShowWindow(window);
         glfwFocusWindow(window);
         GL.createCapabilities();
+
+        // Setup debug message callback if available
+        try {
+            debugProc = GLUtil.setupDebugMessageCallback();
+        } catch (Throwable ignored) {
+            // Some drivers/contexts (notably older macOS) may not support KHR_debug; ignore silently.
+        }
     }
 
     public static void bindAsRenderTarget() {
@@ -68,6 +89,7 @@ public class Window {
     }
 
     public static void closeWindow() {
+        if (debugProc != null) debugProc.free();
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
         glfwTerminate();

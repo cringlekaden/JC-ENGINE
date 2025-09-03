@@ -44,7 +44,7 @@ public class RenderingEngine extends MappedValues {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_DEPTH_CLAMP);
+        // Enable depth clamp only during shadow map rendering to avoid clipping the light frustum.
         lights = new ArrayList<>();
         shadowMaps = new ArrayList<>();
         altShadowMaps = new ArrayList<>();
@@ -73,8 +73,16 @@ public class RenderingEngine extends MappedValues {
     }
 
     public void updateUniformStruct(Transform transform, Material material, Shader shader, String uniformName, String uniformType) {
-        System.out.println("Uniform name: " + uniformName + ". Uniform type: " + uniformType + ". Shader: " + shader.getFileName());
-        throw new IllegalArgumentException(uniformType + " is not a valid type in RenderingEngine...");
+        // Handle any remaining struct uniforms not covered directly in Shader.updateUniforms.
+        // Keep this conservative: support BaseLight explicitly, no-op for unknowns to avoid crashing.
+        switch (uniformType) {
+            case "BaseLight" -> shader.setUniformBaseLight(uniformName, getActiveLight());
+            // Add more struct bindings here if custom engine-level structs are introduced.
+            default -> {
+                // Intentionally no-op to prevent hard failures on unrecognized struct uniforms.
+                // If debugging is needed, consider logging once per shader/uniform.
+            }
+        }
     }
 
     public void render(GameObject object) {
@@ -103,11 +111,14 @@ public class RenderingEngine extends MappedValues {
                 boolean flipFaces = shadowData.getFlipFaces();
                 Camera temp = mainCamera;
                 mainCamera = altCamera;
+                // Avoid clipping light frustum during shadow map generation
+                glEnable(GL_DEPTH_CLAMP);
                 if(flipFaces)
                     glCullFace(GL_FRONT);
                 object.renderAll(shadowMapShader, this);
                 if(flipFaces)
                     glCullFace(GL_BACK);
+                glDisable(GL_DEPTH_CLAMP);
                 mainCamera = temp;
                 float shadowSoftness = shadowData.getShadowSoftness();
                 if(shadowSoftness != 0)

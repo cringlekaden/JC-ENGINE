@@ -1,11 +1,11 @@
-#version 330
+#version 410 core
 #include "sampling.glh"
 
 in vec2 texCoord0;
 in vec3 worldPos0;
 in mat3 tbnMatrix;
 
-out vec4 fragColor;
+layout (location=0) out vec4 fragColor;
 
 uniform float dispMapScale;
 uniform float dispMapBias;

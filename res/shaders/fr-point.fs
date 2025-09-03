@@ -1,4 +1,4 @@
-#version 330
+#version 410 core
 #include "lighting.fsh"
 
 uniform PointLight R_pointLight;
